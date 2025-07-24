@@ -66,6 +66,11 @@ app.use(bodyParser.json())
 // 4. Apply the auth middleware globally (or to specific routes)
 app.use(authMiddleware)
 
+// Health check endpoint for Docker
+app.get('/health', (req: Request, res: Response) => {
+  res.status(200).json({ status: 'healthy', timestamp: new Date().toISOString() })
+})
+
 // 5. Define your routes as usual
 app.post('/signCertificate', signCertificate)
 

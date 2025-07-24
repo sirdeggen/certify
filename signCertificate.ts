@@ -54,8 +54,6 @@ export async function signCertificate(request: Request, res: Response): Promise<
         const { publicKey: certifier } = await serverWallet.getPublicKey({ identityKey: true });
         
         const subject = req.auth.identityKey;
-        console.log({ subject })
-
         // Decrypt certificate fields and verify them before signing
         const decryptedFields = await MasterCertificate.decryptFields(
             serverWallet,
@@ -64,7 +62,7 @@ export async function signCertificate(request: Request, res: Response): Promise<
             subject
         );
 
-        console.log({ decryptedFields }) // PRODUCTION: actually check if we believe this before attesting to it
+        // PRODUCTION: actually check if we believe this before attesting to it
 
         const serverNonce = await createNonce(serverWallet as unknown as WalletInterface, subject);
 
@@ -96,8 +94,6 @@ export async function signCertificate(request: Request, res: Response): Promise<
                 randomizeOutputs: false // this ensures the output is always at the same position at outputIndex 0
             }
         });
-        console.log("revocationTxid", revocation.txid);
-
 
         // Signing the new certificate
         const signedCertificate = new Certificate(
@@ -111,7 +107,6 @@ export async function signCertificate(request: Request, res: Response): Promise<
 
         await signedCertificate.sign(serverWallet);
 
-        console.log("signedCertificate", signedCertificate);
         res.json({ certificate: signedCertificate, serverNonce: serverNonce });
     } catch (error) {
         console.error({ error });
